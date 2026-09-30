@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>BookLoop - Exchanges</title>
+
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+    <nav class="navbar">
+        <h2>BookLoop</h2>
+
+        <div class="nav-links">
+            <a href="dashboard.html">Dashboard</a>
+            <a href="books.html">Books</a>
+            <a href="requests.html">Requests</a>
+            <a href="exchanges.html">Exchanges</a>
+            <a href="profile.html">Profile</a>
+        </div>
+    </nav>
+
+    <div class="books-container">
+
+        <h1>My Exchanges</h1>
+
+        <p>View and manage your book exchanges.</p>
+
+        <div id="exchangesList">
+            <p>Loading exchanges...</p>
+        </div>
+
+    </div>
+
+    <script src="js/api.js"></script>
+
+    <script>
+        async function loadExchanges() {
+            try {
+
+                const data = await apiRequest("/exchanges/my");
+
+                const exchangesList =
+                    document.getElementById("exchangesList");
+
+                if (!data.exchanges || data.exchanges.length === 0) {
+                    exchangesList.innerHTML =
+                        "<p>No exchanges found.</p>";
+                    return;
+                }
+
+                exchangesList.innerHTML = data.exchanges.map(exchange => `
+                    <div class="book-card">
+
+                        <p>
+                            <strong>Offered Book:</strong>
+                            ${exchange.offeredBook?.title || "Not specified"}
+                        </p>
+
+                        <p>
+                            <strong>Requested Book:</strong>
+                            ${exchange.requestedBook?.title || "Not specified"}
+                        </p>
+
+                        <p>
+                            <strong>Status:</strong>
+                            ${exchange.status}
+                        </p>
+
+                        <p>
+                            <strong>Message:</strong>
+                            ${exchange.message || "No message"}
+                        </p>
+
+                    </div>
+                `).join("");
+
+            } catch (error) {
+
+                document.getElementById("exchangesList").innerHTML =
+                    `<p>${error.message}</p>`;
+
+            }
+        }
+
+        loadExchanges();
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>BookLoop - Admin Panel</title>
+
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+    <nav class="navbar">
+        <h2>BookLoop Admin</h2>
+
+        <div class="nav-links">
+            <a href="dashboard.html">Dashboard</a>
+            <a href="books.html">Books</a>
+            <a href="requests.html">Requests</a>
+            <a href="exchanges.html">Exchanges</a>
+            <a href="profile.html">Profile</a>
+        </div>
+    </nav>
+
+    <div class="books-container">
+
+        <h1>Admin Panel</h1>
+
+        <p>Manage and monitor BookLoop data.</p>
+
+        <!-- Statistics -->
+
+        <div class="dashboard-grid">
+
+            <div class="dashboard-card">
+                <h3>Users</h3>
+                <p id="usersCount">0</p>
+            </div>
+
+            <div class="dashboard-card">
+                <h3>Books</h3>
+                <p id="adminBooksCount">0</p>
+            </div>
+
+            <div class="dashboard-card">
+                <h3>Requests</h3>
+                <p id="adminRequestsCount">0</p>
+            </div>
+
+            <div class="dashboard-card">
+                <h3>Transactions</h3>
+                <p id="adminTransactionsCount">0</p>
+            </div>
+
+            <div class="dashboard-card">
+                <h3>Exchanges</h3>
+                <p id="adminExchangesCount">0</p>
+            </div>
+
+        </div>
+
+        <!-- Users -->
+
+        <h2>Users</h2>
+
+        <div id="usersList">
+            <p>Loading users...</p>
+        </div>
+
+
+        <!-- Books -->
+
+        <h2>Books</h2>
+
+        <div id="adminBooksList">
+            <p>Loading books...</p>
+        </div>
+
+    </div>
+
+    <script src="js/api.js"></script>
+
+    <script>
+
+        async function loadAdminData() {
+
+            try {
+
+                // Load statistics
+
+                const statsData =
+                    await apiRequest("/admin/stats");
+
+                const stats = statsData.stats;
+
+                document.getElementById("usersCount").textContent =
+                    stats.users;
+
+                document.getElementById("adminBooksCount").textContent =
+                    stats.books;
+
+                document.getElementById("adminRequestsCount").textContent =
+                    stats.requests;
+
+                document.getElementById("adminTransactionsCount").textContent =
+                    stats.transactions;
+
+                document.getElementById("adminExchangesCount").textContent =
+                    stats.exchanges;
+
+
+                // Load users
+
+                const usersData =
+                    await apiRequest("/admin/users");
+
+                const usersList =
+                    document.getElementById("usersList");
+
+                if (!usersData.users || usersData.users.length === 0) {
+
+                    usersList.innerHTML =
+                        "<p>No users found.</p>";
+
+                } else {
+
+                    usersList.innerHTML =
+                        usersData.users.map(user => `
+
+                            <div class="book-card">
+
+                                <h3>${user.name}</h3>
+
+                                <p>
+                                    <strong>Email:</strong>
+                                    ${user.email}
+                                </p>
+
+                                <p>
+                                    <strong>College:</strong>
+                                    ${user.college || "Not specified"}
+                                </p>
+
+                                <p>
+                                    <strong>City:</strong>
+                                    ${user.city || "Not specified"}
+                                </p>
+
+                                <p>
+                                    <strong>Role:</strong>
+                                    ${user.role || "USER"}
+                                </p>
+
+                            </div>
+
+                        `).join("");
+
+                }
+
+
+                // Load books
+
+                const booksData =
+                    await apiRequest("/admin/books");
+
+                const booksList =
+                    document.getElementById("adminBooksList");
+
+                if (!booksData.books || booksData.books.length === 0) {
+
+                    booksList.innerHTML =
+                        "<p>No books found.</p>";
+
+                } else {
+
+                    booksList.innerHTML =
+                        booksData.books.map(book => `
+
+                            <div class="book-card">
+
+                                <h3>${book.title}</h3>
+
+                                <p>
+                                    <strong>Author:</strong>
+                                    ${book.author || "Not specified"}
+                                </p>
+
+                                <p>
+                                    <strong>Subject:</strong>
+                                    ${book.subject || "Not specified"}
+                                </p>
+
+                                <p>
+                                    <strong>Type:</strong>
+                                    ${book.listingType}
+                                </p>
+
+                                <p>
+                                    <strong>Status:</strong>
+                                    ${book.status}
+                                </p>
+
+                                <p>
+                                    <strong>Owner:</strong>
+                                    ${book.owner?.name || "Unknown"}
+                                </p>
+
+                            </div>
+
+                        `).join("");
+
+                }
+
+            } catch (error) {
+
+                console.error(error);
+
+                document.getElementById("usersList").innerHTML =
+                    `<p>${error.message}</p>`;
+
+                document.getElementById("adminBooksList").innerHTML =
+                    `<p>${error.message}</p>`;
+            }
+        }
+
+        loadAdminData();
+
+    </script>
+
+</body>
+</html>

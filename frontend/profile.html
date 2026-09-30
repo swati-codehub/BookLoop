@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>BookLoop - Profile</title>
+
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+    <nav class="navbar">
+        <h2>BookLoop</h2>
+
+        <div class="nav-links">
+            <a href="dashboard.html">Dashboard</a>
+            <a href="books.html">Books</a>
+            <a href="requests.html">Requests</a>
+            <a href="exchanges.html">Exchanges</a>
+            <a href="profile.html">Profile</a>
+        </div>
+    </nav>
+
+    <div class="books-container">
+
+        <h1>My Profile</h1>
+
+        <p>View your BookLoop account information.</p>
+
+        <div class="book-card">
+
+            <p>
+                <strong>Name:</strong>
+                <span id="profileName">Loading...</span>
+            </p>
+
+            <p>
+                <strong>Email:</strong>
+                <span id="profileEmail">Loading...</span>
+            </p>
+
+            <p>
+                <strong>College:</strong>
+                <span id="profileCollege">Loading...</span>
+            </p>
+
+            <p>
+                <strong>City:</strong>
+                <span id="profileCity">Loading...</span>
+            </p>
+
+            <p>
+                <strong>Area:</strong>
+                <span id="profileArea">Loading...</span>
+            </p>
+
+        </div>
+
+    </div>
+
+    <script src="js/api.js"></script>
+
+    <script>
+        async function loadProfile() {
+            try {
+                const data = await apiRequest("/auth/me");
+
+                const user = data.user;
+
+                document.getElementById("profileName").textContent =
+                    user.name || "Not specified";
+
+                document.getElementById("profileEmail").textContent =
+                    user.email || "Not specified";
+
+                document.getElementById("profileCollege").textContent =
+                    user.college || "Not specified";
+
+                document.getElementById("profileCity").textContent =
+                    user.city || "Not specified";
+
+                document.getElementById("profileArea").textContent =
+                    user.area || "Not specified";
+
+            } catch (error) {
+                document.getElementById("profileName").textContent =
+                    "Failed to load profile";
+
+                console.error(error);
+            }
+        }
+
+        loadProfile();
+    </script>
+
+</body>
+</html>

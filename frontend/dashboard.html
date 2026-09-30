@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BookLoop - Dashboard</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+    <nav class="navbar">
+    <h2>BookLoop</h2>
+
+    <div class="nav-links">
+        <a href="dashboard.html">Dashboard</a>
+        <a href="books.html">Books</a>
+        <a href="requests.html">Requests</a>
+        <a href="exchanges.html">Exchanges</a>
+        <a href="profile.html">Profile</a>
+    </div>
+</nav>
+    <div class="dashboard-container">
+
+        <h1>BookLoop Dashboard</h1>
+        <p>Welcome to your dashboard</p>
+
+        <div class="dashboard-grid">
+
+            <div class="dashboard-card">
+                <h3>My Books</h3>
+                <p id="booksCount">0</p>
+            </div>
+
+            <div class="dashboard-card">
+                <h3>My Requests</h3>
+                <p id="requestsCount">0</p>
+            </div>
+
+            <div class="dashboard-card">
+                <h3>Transactions</h3>
+                <p id="transactionsCount">0</p>
+            </div>
+
+            <div class="dashboard-card">
+                <h3>Exchanges</h3>
+                <p id="exchangesCount">0</p>
+            </div>
+
+            <div class="dashboard-card">
+                <h3>Reviews Given</h3>
+                <p id="reviewsCount">0</p>
+            </div>
+
+            <div class="dashboard-card">
+                <h3>Unread Notifications</h3>
+                <p id="notificationsCount">0</p>
+            </div>
+
+        </div>
+
+        <button id="logoutBtn">Logout</button>
+
+    </div>
+
+    <script src="js/api.js"></script>
+
+    <script>
+        async function loadDashboard() {
+            try {
+                const data = await apiRequest("/dashboard");
+
+                const dashboard = data.dashboard;
+
+                document.getElementById("booksCount").textContent =
+                    dashboard.books;
+
+                document.getElementById("requestsCount").textContent =
+                    dashboard.requests;
+
+                document.getElementById("transactionsCount").textContent =
+                    dashboard.transactions;
+
+                document.getElementById("exchangesCount").textContent =
+                    dashboard.exchanges;
+
+                document.getElementById("reviewsCount").textContent =
+                    dashboard.reviews;
+
+                document.getElementById("notificationsCount").textContent =
+                    dashboard.unreadNotifications;
+
+            } catch (error) {
+                console.error(error);
+            }
+        }
+
+        document.getElementById("logoutBtn").addEventListener("click", () => {
+            localStorage.removeItem("token");
+            window.location.href = "login.html";
+        });
+
+        loadDashboard();
+    </script>
+
+</body>
+
+</html>

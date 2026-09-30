@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>BookLoop - Requests</title>
+
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+    <nav class="navbar">
+        <h2>BookLoop</h2>
+
+        <div class="nav-links">
+            <a href="dashboard.html">Dashboard</a>
+            <a href="books.html">Books</a>
+            <a href="requests.html">Requests</a>
+            <a href="exchanges.html">Exchanges</a>
+            <a href="profile.html">Profile</a>
+        </div>
+    </nav>
+
+    <div class="books-container">
+
+        <h1>My Requests</h1>
+
+        <p>View and manage your book requests.</p>
+
+        <div id="requestsList">
+            <p>Loading requests...</p>
+        </div>
+
+    </div>
+
+    <script src="js/api.js"></script>
+
+    <script>
+        async function loadRequests() {
+            try {
+                const data = await apiRequest("/requests/my");
+
+                const requestsList =
+                    document.getElementById("requestsList");
+
+                if (!data.requests || data.requests.length === 0) {
+                    requestsList.innerHTML =
+                        "<p>No book requests found.</p>";
+                    return;
+                }
+
+                requestsList.innerHTML = data.requests.map(request => `
+                    <div class="book-card">
+
+                        <h3>${request.title}</h3>
+
+                        <p>
+                            <strong>Author:</strong>
+                            ${request.author || "Not specified"}
+                        </p>
+
+                        <p>
+                            <strong>Subject:</strong>
+                            ${request.subject || "Not specified"}
+                        </p>
+
+                        <p>
+                            <strong>Preference:</strong>
+                            ${request.preference}
+                        </p>
+
+                        <p>
+                            <strong>Maximum Budget:</strong>
+                            ₹${request.maxBudget || 0}
+                        </p>
+
+                        <p>
+                            <strong>Status:</strong>
+                            ${request.status}
+                        </p>
+
+                    </div>
+                `).join("");
+
+            } catch (error) {
+                document.getElementById("requestsList").innerHTML =
+                    `<p>${error.message}</p>`;
+            }
+        }
+
+        loadRequests();
+    </script>
+
+</body>
+</html>

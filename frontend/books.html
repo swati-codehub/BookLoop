@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BookLoop - Books</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+<nav class="navbar">
+    <h2>BookLoop</h2>
+
+    <div class="nav-links">
+        <a href="dashboard.html">Dashboard</a>
+        <a href="books.html">Books</a>
+        <a href="requests.html">Requests</a>
+        <a href="exchanges.html">Exchanges</a>
+        <a href="profile.html">Profile</a>
+    </div>
+</nav>
+    <div class="books-container">
+
+        <h1>Available Books</h1>
+        <p>Find books from other students.</p>
+
+        <div class="search-box">
+            <input
+                type="text"
+                id="search"
+                placeholder="Search by title, author or ISBN"
+            >
+
+            <button onclick="loadBooks()">Search</button>
+        </div>
+
+        <div id="booksList" class="books-grid">
+            <p>Loading books...</p>
+        </div>
+
+    </div>
+
+    <script src="js/api.js"></script>
+
+    <script>
+        async function loadBooks() {
+            try {
+                const search = document.getElementById("search").value;
+
+                let endpoint = "/books";
+
+                if (search) {
+                    endpoint += `?search=${encodeURIComponent(search)}`;
+                }
+
+                const data = await apiRequest(endpoint);
+
+                const booksList = document.getElementById("booksList");
+
+                if (!data.books || data.books.length === 0) {
+                    booksList.innerHTML = "<p>No books found.</p>";
+                    return;
+                }
+
+                booksList.innerHTML = data.books.map(book => `
+                    <div class="book-card">
+
+                        <h3>${book.title}</h3>
+
+                        <p><strong>Author:</strong>
+                            ${book.author || "Not specified"}
+                        </p>
+
+                        <p><strong>Subject:</strong>
+                            ${book.subject || "Not specified"}
+                        </p>
+
+                        <p><strong>Condition:</strong>
+                            ${book.condition}
+                        </p>
+
+                        <p><strong>Type:</strong>
+                            ${book.listingType}
+                        </p>
+
+                        <p><strong>Price:</strong>
+                            ₹${book.price}
+                        </p>
+
+                        <p><strong>City:</strong>
+                            ${book.location?.city || "Not specified"}
+                        </p>
+
+                    </div>
+                `).join("");
+
+            } catch (error) {
+                document.getElementById("booksList").innerHTML =
+                    `<p>${error.message}</p>`;
+            }
+        }
+
+        loadBooks();
+    </script>
+
+</body>
+</html>
